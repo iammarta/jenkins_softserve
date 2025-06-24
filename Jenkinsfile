@@ -9,7 +9,7 @@ pipeline {
     stages {
         stage('Install Apache on Remote VM') {
             steps {
-                sshagent(credentials: ['remote-vm-ssh']) {
+                sshagent(credentials: ['jenkins-ssh-jenkinskey']) {
                     sh '''
                     ssh -o StrictHostKeyChecking=no $REMOTE_USER@$REMOTE_HOST "
                         sudo apt update &&
@@ -24,7 +24,7 @@ pipeline {
 
         stage('Check Apache status') {
             steps {
-                sshagent(credentials: ['remote-vm-ssh']) {
+                sshagent(credentials: ['jenkins-ssh-jenkinskey']) {
                     sh '''
                     ssh $REMOTE_USER@$REMOTE_HOST "
                         sudo systemctl status apache2 | grep Active
