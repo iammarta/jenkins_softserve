@@ -33,6 +33,22 @@ pipeline {
                 }
             }
         }
+
+        stage('Check Apache logs for errors') {
+            steps {
+                sshagent(credentials: ['jenkins-ssh-jenkinskey']) {
+                    sh '''
+                    ssh $REMOTE_USER@$REMOTE_HOST "
+                        echo 'Checking for 4xx errors in access.log:'
+                        sudo grep ' 4[0-9][0-9] ' /var/log/apache2/access.log || echo 'No 4xx errors found.'
+
+                        echo 'Checking for 5xx errors in error.log:'
+                        sudo grep ' 5[0-9][0-9] ' /var/log/apache2/error.log || echo 'No 5xx errors found.'
+                    "
+                    '''
+                }
+            }
+        }
     }
 
     post {
